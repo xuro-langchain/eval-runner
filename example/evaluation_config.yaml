@@ -16,7 +16,7 @@ spec:
         temperature: 0.5
     - type: LLMAsJudge
       category: CustomMetric 
-      name: Correctness # will be used as feedback key
+      name: Simplicity # will be used as feedback key
       model:
         provider: openai
         name: gpt-4o
@@ -39,10 +39,10 @@ spec:
       expect_output: expect_output
       output: output
   evaluate:
-    target_type: DifyApplication
+    target_type: LangGraph
     target:
-      url: https://dify-internal.corp
-      app: ${{ secrets.DIFY_APP_ID }}
-      api_key: ${{ secrets.DIFY_APP_KEY }}
+      url: http://localhost:2024
+      app: ${DIFY_APP_ID}
+      api_key: ${DIFY_APP_KEY}
     input: input.user_query
     output: output

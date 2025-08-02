@@ -8,6 +8,7 @@ dependencies = [
     "jmespath>=1.0.1",
     "langchain-openai>=0.3.28",
     "langchain[anthropic,aws,google-genai,openai]>=0.3.27",
+    "langgraph>=0.6.2",
     "langgraph-sdk>=0.2.0",
     "langsmith>=0.4.9",
     "openevals>=0.1.0",

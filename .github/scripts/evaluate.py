@@ -1,9 +1,10 @@
+import os
 import yaml
 import asyncio
+import inspect
 import jmespath
 import argparse
 from typing import Callable
-import inspect
 
 from langsmith import Client
 from langchain_openai import ChatOpenAI
@@ -154,8 +155,32 @@ def get_target_function(target_cfg: dict) -> Callable:
     else:
         raise ValueError(f"Unsupported target type: {target_type}")
 
-def dify_target_function(target: dict, input_key: str, output_key: str) -> Callable:
-    pass
+def dify_target_function(target_cfg: dict, input_key: str, output_key: str) -> Callable:
+    import httpx
+    api_url = target_cfg.get('url')
+    api_key = target_cfg.get('api_key')
+    app_id = target_cfg.get('app')  # Used as 'user' in the request
+
+    headers = {
+        'Authorization': f'Bearer {api_key}',
+        'Content-Type': 'application/json',
+    }
+
+    async def target(inputs: dict) -> dict:
+        # Extract the input value using jmespath (for nested keys)
+        input_value = jmespath.search(input_key, inputs)
+        data = {
+            "inputs": input_value,
+            "response_mode": "blocking",
+        }
+        async with httpx.AsyncClient() as client:
+            response = await client.post(api_url, headers=headers, json=data)
+            response.raise_for_status()
+            result = response.json()
+            output_value = jmespath.search(output_key, result) 
+            return output_value
+
+    return target
 
 def langgraph_target_function(target_cfg: dict, input_key: str, output_key: str) -> Callable:
     from langgraph_sdk import get_client
@@ -175,11 +200,26 @@ def langgraph_target_function(target_cfg: dict, input_key: str, output_key: str)
         return output_value
     return target
         
+
+## ----------------------------------------------------------------------------------
+## Main & Helpers
+## ----------------------------------------------------------------------------------
+def resolve_env_vars(obj):
+    if isinstance(obj, dict):
+        return {k: resolve_env_vars(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [resolve_env_vars(i) for i in obj]
+    elif isinstance(obj, str) and obj.startswith("${") and obj.endswith("}"):
+        env_var = obj[2:-1]
+        return os.environ.get(env_var, obj)
+    else:
+        return obj
     
 async def main(config_path):
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
-
+    config = resolve_env_vars(config)
+    
     # Connect to LangSmith
     client = Client()
 

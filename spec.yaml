@@ -1,0 +1,35 @@
+# Evaluation config specification for evalrunner
+version: <string>  # REQUIRED. Version string, e.g. "apiv1alpha1.evaluation.infra"
+name: <string>     # REQUIRED. Name for this evaluation run/experiment.
+kind: <string>     # OPTIONAL. Type of evaluation, e.g. "LangSmithEvaluation"
+metadata:
+  # OPTIONAL. Arbitrary metadata for your own use.
+spec:
+  type: <string>   # OPTIONAL. Type of experiment, e.g. "RunExperimentByDataset"
+  dataset: <string>  # REQUIRED. Name of the dataset to evaluate (must exist in LangSmith)
+  metrics:         # REQUIRED. List of metric definitions.
+    - type: <string>  # REQUIRED. "LLMAsJudge" or "Code"
+      category: <string>  # REQUIRED. "BuiltinMetric" or "CustomMetric"
+      name: <string>      # REQUIRED. Name of the metric (e.g., "Correctness", "ExactMatch", etc.)
+      model:              # REQUIRED for LLMAsJudge. Model config for the LLM.
+        provider: <string>  # REQUIRED. e.g., "openai", "anthropic", "google", "aws"
+        name: <string>      # REQUIRED. Model name, e.g., "gpt-4o"
+        temperature: <float>  # OPTIONAL. Any other model params supported by the provider.
+      # REQUIRED For LLMAsJudge CustomMetrics, define the prompt as a list of messages. Use the pipe (|) for multi-line content.
+      prompt:
+        - role: <string>   # "system", "human", "ai", etc.
+          content: |
+            # REQUIRED for CustomMetric. Mustache formatting is expected here.
+            # Example: "You are a helpful assistant. Input: {{input}}"
+      feedback_configuration:  # REQUIRED for LLMAsJudge CustomMetrics. Feedback field config.
+        type: <string>         # "boolean", "score", or "enum"
+        use_reasoning: <bool>  # Whether to require reasoning in LLM feedback
+        choices: <list>        # REQUIRED if type is "enum"
+  evaluate:                   # REQUIRED. Target application config.
+    target_type: <string>     # REQUIRED. "Dify" or "LangGraph"
+    target:                   # REQUIRED. Connection info for the target app.
+      url: <string>           # REQUIRED. API endpoint for the app (e.g., Dify or LangGraph)
+      app: <string>           # REQUIRED. App ID for Dify, or Assistant ID for LangGraph
+      api_key: <string>       # REQUIRED. API key/secret, or Auth token. Expects ENV variable formatting (ex. ${DIFY_APP_KEY})
+    input: <string>           # REQUIRED. JMESPath to input field for the app. JMESPath will be applied to dataset inputs before passing to the app.
+    output: <string>          # REQUIRED. JMESPath to output field for the app. JMESPath will be applied to app outputs before passing to evaluators.

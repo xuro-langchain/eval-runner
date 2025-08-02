@@ -1,0 +1,31 @@
+name: Run LangSmith Evaluation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: uv pip sync
+
+      - name: Run evaluation
+        env:
+          DIFY_APP_ID: ${{ secrets.DIFY_APP_ID }}
+          DIFY_APP_KEY: ${{ secrets.DIFY_APP_KEY }}
+          LANGSMITH_API_KEY: ${{ secrets.LANGSMITH_API_KEY }}
+        run: |
+          python .github/scripts/evaluate.py --config evaluation_config.yaml 

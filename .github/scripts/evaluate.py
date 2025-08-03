@@ -218,7 +218,8 @@ def get_target_function(target_cfg: dict) -> Callable:
         input_key = None
     elif not input_key.startswith("inputs."):
         raise ValueError(f"Input key must start with 'inputs' to match against dataset: {input_key}")
-    
+    input_key = input_key[len("inputs."):]
+
     output_key = target_cfg.get('output', 'outputs')
     if output_key == 'outputs':
         output_key = None
@@ -239,7 +240,8 @@ def dify_target_function(target_cfg: dict, input_key: str | None, output_key: st
 
     api_url = target_cfg.get('url')
     api_key = target_cfg.get('api_key')
-    app_id = target_cfg.get('app')  # Used as 'user' in the request
+    app_id = target_cfg.get('app') 
+    user_id = target_cfg.get('user', 'eval-runner') # Required by Dify
 
     headers = {
         'Authorization': f'Bearer {api_key}',
@@ -255,8 +257,10 @@ def dify_target_function(target_cfg: dict, input_key: str | None, output_key: st
             if input_value is None:
                 raise ValueError(f"Input key {input_key} not found in inputs: {inputs}")
         data = {
-            "inputs": input_value,
+            "query": input_value,
+            "inputs": {},
             "response_mode": "blocking",
+            "user": user_id,
         }
         async with httpx.AsyncClient() as client:
             response = await client.post(api_url, headers=headers, json=data)

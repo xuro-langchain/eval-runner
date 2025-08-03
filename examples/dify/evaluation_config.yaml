@@ -55,11 +55,12 @@ spec:
       category: BuiltinMetric
       name: ExactMatch # defined in builtins/code.py
   evaluate:
-    target_type: LangGraph
+    target_type: Dify
     target:
-      url: ${LANGGRAPH_DEPLOYMENT_URL} # We've deployed the eli5 agent in 'agent.py' to this URL using LangGraph Platform
-      app: ${LANGGRAPH_ASSISTANT} # Assistant ID defined in langgraph.json
-      api_key: ${LANGSMITH_API_KEY} # Should be LANGSMITH_API_KEY. Represents a key or auth token to access LangGraph API
-    input: inputs # Pass in the full dict to our agent since it expects a dict. We could use inputs.question if our agent took a string
-    output: outputs.messages[-1].content # Parse our agent's output for the final string response
-    # NOTE: if the output is not a dict,LangSmith automatically wraps it for evals as {"output": "..."}
+      url: https://api.dify.ai/v1/chat-messages # We've deployed a public agent in Dify
+      app: ${DIFY_APP_ID} # Dify infers agent from API Key
+      api_key: ${DIFY_API_KEY} # Represents a key or auth token to access Dify API
+      user: eval-runner # Required by Dify
+    input: inputs.question # Pass in just the question field of our dataset since Dify expects a string
+    output: outputs.answer # Parse our agent's output for the final string response
+    # NOTE: if the output is not a dict, LangSmith automatically wraps it for evals as {"output": "..."}

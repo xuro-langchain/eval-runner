@@ -32,6 +32,9 @@ jobs:
           LANGSMITH_API_KEY: ${{ secrets.LANGSMITH_API_KEY }}
           LANGGRAPH_ASSISTANT: ${{ vars.LANGGRAPH_ASSISTANT }}
           LANGGRAPH_DEPLOYMENT_URL: ${{ vars.LANGGRAPH_DEPLOYMENT_URL }}
+          DIFY_API_KEY: ${{ secrets.DIFY_API_KEY }}
+          DIFY_APP_ID: ${{ vars.DIFY_APP_ID }}
+          DIFY_DEPLOYMENT_URL: ${{ vars.DIFY_DEPLOYMENT_URL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}

@@ -1,4 +1,4 @@
-# lowcode-evals
+# eval-runner
 
 A framework for running automated LLM and code-based evaluations on datasets, with built-in support for LangSmith, Dify, and custom metrics.
 
@@ -15,7 +15,7 @@ A framework for running automated LLM and code-based evaluations on datasets, wi
 
 ```bash
 # Recommended: use Python 3.10+
-uv pip sync
+uv sync
 ```
 
 ### 2. Prepare your config

@@ -24,8 +24,13 @@ jobs:
 
       - name: Run evaluation
         env:
-          LANGSMITH_API_URL: ${{ vars.LANGSMITH_API_URL }}
-          LANGSMITH_ASSISTANT: ${{ vars.LANGSMITH_ASSISTANT }}
-          LANGSMITH_API_KEY: ${{ secrets.LANGSMITH_API_KEY }}
+          LANGGRAPH_API_KEY: ${{ secrets.LANGGRAPH_API_KEY }}
+          LANGGRAPH_ASSISTANT: ${{ vars.LANGGRAPH_ASSISTANT }}
+          LANGGRAPH_DEPLOYMENT_URL: ${{ vars.LANGGRAPH_DEPLOYMENT_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           python .github/scripts/evaluate.py --config ${{ vars.EVAL_CONFIG_PATH}}

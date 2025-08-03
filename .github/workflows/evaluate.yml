@@ -29,7 +29,7 @@ jobs:
 
       - name: Run evaluation
         env:
-          LANGGRAPH_API_KEY: ${{ secrets.LANGGRAPH_API_KEY }}
+          LANGSMITH_API_KEY: ${{ secrets.LANGSMITH_API_KEY }}
           LANGGRAPH_ASSISTANT: ${{ vars.LANGGRAPH_ASSISTANT }}
           LANGGRAPH_DEPLOYMENT_URL: ${{ vars.LANGGRAPH_DEPLOYMENT_URL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

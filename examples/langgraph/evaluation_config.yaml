@@ -60,7 +60,7 @@ spec:
     target:
       url: https://eli5-deployed-2480f5a7116458808f0ada789c8b28c7.us.langgraph.app # We've deployed the eli5 agent in 'agent.py' to this URL using LangGraph Platform
       app: eli5 # Assistant ID defined in langgraph.json
-      api_key: ${LANGGRAPH_API_KEY} # Same as LANGSMITH_API_KEY. Represents a key or auth token to access LangGraph API
+      api_key: ${LANGSMITH_API_KEY} # Same as LANGSMITH_API_KEY. Represents a key or auth token to access LangGraph API
     input: inputs # Pass in the full dict to our agent since it expects a dict. We could use inputs.question if our agent took a string
     output: outputs.messages[-1].content # Parse our agent's output for the final string response
     # NOTE: if the output is not a dict,LangSmith automatically wraps it for evals as {"output": "..."}

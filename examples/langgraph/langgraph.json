@@ -1,0 +1,7 @@
+{
+    "dependencies": ["."],
+    "graphs": {
+      "eli5": "./agent.py:app"
+    },
+    "env": "./.env"
+  }

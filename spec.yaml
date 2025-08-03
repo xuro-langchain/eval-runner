@@ -5,7 +5,7 @@ kind: <string>     # OPTIONAL. Type of evaluation, e.g. "LangSmithEvaluation"
 metadata:
   # OPTIONAL. Arbitrary metadata for your own use.
 spec:
-  type: <string>   # OPTIONAL. Type of experiment, e.g. "RunExperimentByDataset"
+  type: <string>   # OPTIONAL. User-defined type of evaluation.
   dataset: <string>  # REQUIRED. Name of the dataset to evaluate (must exist in LangSmith)
   metrics:         # REQUIRED. List of metric definitions.
     - type: <string>  # REQUIRED. "LLMAsJudge" or "Code"
@@ -20,7 +20,9 @@ spec:
         - role: <string>   # "system", "human", "ai", etc.
           content: |
             # REQUIRED for CustomMetric. Mustache formatting is expected here.
-            # Example: "You are a helpful assistant. Input: {{input}}"
+            # Example: "You are a helpful assistant. Input: {{inputs}}"
+            # By default you have access to {{inputs}} and {{reference_outputs}} from your dataset,
+            # as well as {{outputs}} from your application running on the inputs.
       feedback_configuration:  # REQUIRED for LLMAsJudge CustomMetrics. Feedback field config.
         type: <string>         # "boolean", "score", or "enum"
         use_reasoning: <bool>  # Whether to require reasoning in LLM feedback

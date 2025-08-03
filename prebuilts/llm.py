@@ -24,9 +24,9 @@ async def correctness(model: BaseChatModel, inputs: dict, outputs: dict, referen
 
     Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct."""
     
-    run_info = f"""QUESTION: {inputs['question']}
-    GROUND TRUTH RESPONSE: {reference_outputs['response']}
-    STUDENT RESPONSE: {outputs['response']}"""
+    run_info = f"""QUESTION: {inputs}
+    GROUND TRUTH RESPONSE: {reference_outputs}
+    STUDENT RESPONSE: {outputs}"""
 
     grader_llm = model.with_structured_output(Grade, method="json_schema", strict=True)
     prompt = [{"role": "system", "content": judge_instructions}, {"role": "user", "content": run_info}]
@@ -34,9 +34,9 @@ async def correctness(model: BaseChatModel, inputs: dict, outputs: dict, referen
     return grade["is_correct"]
 
 
-def judge_factory(model: BaseChatModel, evaluator: Callable) -> Callable:
-    def judge(inputs: dict, outputs: dict, reference_outputs: dict):
-        return evaluator(model, inputs, outputs, reference_outputs)
+async def prebuilt_evaluator_factory(model: BaseChatModel, evaluator: Callable) -> Callable:
+    async def judge(inputs: dict, outputs: dict, reference_outputs: dict):
+        return await evaluator(model, inputs, outputs, reference_outputs)
     judge.__name__ = evaluator.__name__
     return judge
 

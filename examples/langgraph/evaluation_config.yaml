@@ -1,0 +1,66 @@
+version: apiv1alpha1.evaluation.infra
+name: evaluation_metrics
+kind: LangSmithEvaluation
+metadata:
+  # Add arbitrary metadata for your own use.
+spec:
+  type: OfflineEvaluation
+  dataset: evalrunner # This dataset must exist in LangSmith. It's uploaded in dataset.py
+  metrics:
+    - type: LLMAsJudge
+      category: BuiltinMetric
+      name: Correctness # defined in builtins/llm.py
+      model:
+        provider: openai
+        name: gpt-4o
+        temperature: 0.3
+    - type: LLMAsJudge
+      category: CustomMetric 
+      name: Simplicity # will be used as feedback key in LangSmith
+      model:
+        provider: openai
+        name: gpt-4o
+        temperature: 0.5
+        # any field supported on the Chat model can be added here
+      prompt:
+        - role: system
+          content: |
+            You are a retired professor that has taught for 20 years. 
+            You're reviewing some conversations between a young child and a teacher.
+            The child has asked the teacher a question, and the teacher has tried to provide a simple expanation.
+            Please evaluate the teacher's response based on how simple it was.
+            Simple responses are easy to understand and distill complex concepts.
+
+            You have been provided with reference outputs that represent simple responses to the question.
+            Use these to help your evaluation of the teacher's response.
+        # Note that inputs.question and reference_outputs.response are from our defined dataset in dataset.py
+        # outputs is being used directly because we parse out the final response of the agent as a string
+        # see the 'evaluate' section in this file and agent.py for more details
+        - role: human
+          content: |
+            Here is the conversation to review, along with reference outputs
+            <question>
+            {{inputs.question}}
+            </question>
+            <teacher_response>
+            {{outputs.output}}
+            </teacher_response>
+            
+            <reference_output>
+            {{reference_outputs.output}}
+            </reference_output>        
+      feedback_configuration:
+          type: score
+          use_reasoning: True
+    - type: Code
+      category: BuiltinMetric
+      name: ExactMatch # defined in builtins/code.py
+  evaluate:
+    target_type: LangGraph
+    target:
+      url: https://eli5-deployed-2480f5a7116458808f0ada789c8b28c7.us.langgraph.app # We've deployed the eli5 agent in 'agent.py' to this URL using LangGraph Platform
+      app: eli5 # Assistant ID defined in langgraph.json
+      api_key: ${LANGGRAPH_API_KEY} # Auth token (Optional if your graph does not enforce auth)
+    input: inputs # Pass in the full dict to our agent since it expects a dict. We could use inputs.question if our agent took a string
+    output: outputs.messages[-1].content # Parse our agent's output for the final string response
+    # NOTE: if the output is not a dict,LangSmith automatically wraps it for evals as {"output": "..."}

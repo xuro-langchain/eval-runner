@@ -27,8 +27,6 @@ def explain(state: GraphState):
     generation = llm.invoke([HumanMessage(content=formatted)])
     return {"question": question, "messages": [generation]}
 
-
-
 graph = StateGraph(GraphState)
 graph.add_node("explain", explain)
 

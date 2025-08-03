@@ -218,14 +218,16 @@ def get_target_function(target_cfg: dict) -> Callable:
         input_key = None
     elif not input_key.startswith("inputs."):
         raise ValueError(f"Input key must start with 'inputs' to match against dataset: {input_key}")
-    input_key = input_key[len("inputs."):]
+    else:
+        input_key = input_key[len("inputs."):]
 
     output_key = target_cfg.get('output', 'outputs')
     if output_key == 'outputs':
         output_key = None
     elif not output_key.startswith("outputs."):
         raise ValueError(f"Output key must start with 'outputs', which represents your application's raw result: {output_key}")
-    output_key = output_key[len("outputs."):]
+    else:
+        output_key = output_key[len("outputs."):]
 
     if target_type == 'Dify':
         return dify_target_function(target, input_key, output_key)

@@ -33,5 +33,6 @@ spec:
       url: <string>           # REQUIRED. API endpoint for the app (e.g., Dify or LangGraph)
       app: <string>           # REQUIRED. App ID for Dify, or Assistant ID for LangGraph
       api_key: <string>       # REQUIRED. API key/secret, or Auth token. Expects ENV variable formatting (ex. ${DIFY_APP_KEY})
+      user: <string>          # OPTIONAL. Required for Dify, but not LangGraph. Developer defined User ID
     input: <string>           # REQUIRED. JMESPath to input field for the app. JMESPath will be applied to dataset inputs before passing to the app.
     output: <string>          # REQUIRED. JMESPath to output field for the app. JMESPath will be applied to app outputs before passing to evaluators.

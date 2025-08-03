@@ -20,7 +20,10 @@ jobs:
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
-        run: uv sync
+        run: |
+          uv venv
+          source .venv/bin/activate
+          uv sync
 
       - name: Run evaluation
         env:
